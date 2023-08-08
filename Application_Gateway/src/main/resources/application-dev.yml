@@ -1,0 +1,24 @@
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders:
+              - content-type
+              - Authorization
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+logging:
+  level:
+    web: debug
+server:
+  port: 5000
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

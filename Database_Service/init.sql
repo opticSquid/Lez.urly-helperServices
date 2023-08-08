@@ -1,0 +1,6 @@
+-- create database if not exists reviews;
+-- create database if not exists users;
+-- create database if not exists vendors;
+-- GRANT ALL PRIVILEGES on reviews.* to 'soumalya'@'%';
+-- GRANT ALL PRIVILEGES on users.* to 'soumalya'@'%';
+-- GRANT ALL PRIVILEGES on vendors.* to 'soumalya'@'%';

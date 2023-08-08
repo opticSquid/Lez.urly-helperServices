@@ -1,0 +1,83 @@
+version: "3.3"
+services:
+  application-gateway:
+    container_name: gateway
+    build: ./Application_Gateway
+    image: opticsquid/leisure_review_gateway:0.3
+    depends_on:
+      - service-discovery
+      - review-service
+      - user-service
+      - vendor-service
+    ports:
+      - 5000:5000
+    networks:
+      - internal
+    restart: on-failure
+
+  review-service:
+    container_name: reviews
+    build: "./Reviews and Streaks"
+    image: opticsquid/leisure_review_reviews:0.3
+    depends_on:
+      - db-server
+      - service-discovery
+      - user-service
+      - vendor-service
+    networks:
+      - internal
+    restart: on-failure
+
+  user-service:
+    container_name: users
+    build: ./Users
+    image: opticsquid/leisure_review_users:0.4
+    depends_on:
+      - db-server
+      - service-discovery
+    networks:
+      - internal
+    restart: on-failure
+
+  vendor-service:
+    container_name: vendors
+    build: ./VendorService
+    image: opticsquid/leisure_review_vendors:0.3
+    depends_on:
+      - db-server
+      - service-discovery
+      - user-service
+    networks:
+      - internal
+    restart: on-failure
+
+  service-discovery:
+    container_name: service-discovery
+    build: ./Service_Registry
+    image: opticsquid/leisure_review_service_registry:0.3
+    networks:
+      - internal
+    restart: on-failure
+
+  db-server:
+    container_name: database
+    build:
+      dockerfile: ./Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: KpSEUx462yLpL9Ab
+      MYSQL_USER: soumalya
+      MYSQL_PASSWORD: aKRR9Y947Z3VsSUq
+    ports:
+      - "3031:3306"
+    networks:
+      - internal
+    volumes:
+      - mysql:/var/lib/mysql
+      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    restart: unless-stopped
+
+networks:
+  internal:
+    driver: bridge
+volumes:
+  mysql:
