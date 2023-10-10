@@ -5,9 +5,11 @@ spring:
     active: dev
 
 eureka:
+  instance:
+    hostname: localhost
   client:
-    fetch-registry: false
-    register-with-eureka: false
+    registerWithEureka: false
+    fetchRegistry: false
 
 logging:
   level:

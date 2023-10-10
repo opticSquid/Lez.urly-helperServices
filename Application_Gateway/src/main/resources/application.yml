@@ -21,6 +21,7 @@ spring:
 logging:
   level:
     web: error
+
 eureka:
   client:
     fetch-registry: true
