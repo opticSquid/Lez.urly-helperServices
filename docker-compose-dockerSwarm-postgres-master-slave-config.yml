@@ -1,0 +1,34 @@
+version: '3.1'
+
+services:
+  postgresql-master:
+    image: 'bitnami/postgresql:latest'
+    ports:
+      - '5432'
+    volumes:
+      - 'postgresql_master_data:/bitnami/postgresql'
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=PkNLm@&#2357
+      - POSTGRESQL_USERNAME=soumalya
+      - POSTGRESQL_PASSWORD=hr@2shxEZ8(8
+      - POSTGRESQL_DATABASE=vendors
+  postgresql-slave:
+    image: 'bitnami/postgresql:latest'
+    ports:
+      - '5432'
+    depends_on:
+      - postgresql-master
+    deploy:
+      replicas: 3
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=PkNLm@&#2357
+      - POSTGRESQL_MASTER_HOST=postgresql-master
+      - POSTGRESQL_PASSWORD=QsCAzX24680
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+
+volumes:
+  postgresql_master_data:
