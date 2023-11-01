@@ -1,83 +1,109 @@
 version: "3.3"
 services:
-  application-gateway:
-    container_name: gateway
-    build: ./Application_Gateway
-    image: opticsquid/leisure_review_gateway:0.3
-    depends_on:
-      - service-discovery
-      - review-service
-      - user-service
-      - vendor-service
+  # application-gateway:
+  #   container_name: gateway
+  #   image: opticsquid/leisure_review_gateway:0.3
+  #   depends_on:
+  #     - service-discovery
+  #     - review-service
+  #     - user-service
+  #     - vendor-service
+  #   ports:
+  #     - 5000:5000
+  #   networks:
+  #     - internal
+  #   restart: on-failure
+
+  # review-service:
+  #   container_name: reviews
+  #   image: opticsquid/leisure_review_reviews:0.3
+  #   depends_on:
+  #     - db-server
+  #     - service-discovery
+  #     - user-service
+  #     - vendor-service
+  #   networks:
+  #     - internal
+  #   restart: on-failure
+
+  # user-service:
+  #   container_name: users
+  #   image: opticsquid/leisure_review_users:0.4
+  #   depends_on:
+  #     - db-server
+  #     - service-discovery
+  #   networks:
+  #     - internal
+  #   restart: on-failure
+
+  # vendor-service:
+  #   container_name: vendors
+  #   image: opticsquid/leisure_review_vendors:0.3
+  #   depends_on:
+  #     - db-server
+  #     - service-discovery
+  #     - user-service
+  #   networks:
+  #     - internal
+  #   restart: on-failure
+
+  # service-discovery:
+  #   container_name: service-discovery
+  #   image: opticsquid/leisure_review_service_registry:0.3
+  #   networks:
+  #     - internal
+  #   restart: on-failure
+
+  # db-server:
+  #   container_name: database
+  #   build:
+  #     dockerfile: ./Dockerfile
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: KpSEUx462yLpL9Ab
+  #     MYSQL_USER: soumalya
+  #     MYSQL_PASSWORD: aKRR9Y947Z3VsSUq
+  #   ports:
+  #     - "3031:3306"
+  #   networks:
+  #     - internal
+  #   volumes:
+  #     - mysql:/var/lib/mysql
+  #     # - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+  #   restart: unless-stopped
+  mysql-master:
+    image: "bitnami/mysql:latest"
     ports:
-      - 5000:5000
-    networks:
-      - internal
-    restart: on-failure
-
-  review-service:
-    container_name: reviews
-    build: "./Reviews and Streaks"
-    image: opticsquid/leisure_review_reviews:0.3
-    depends_on:
-      - db-server
-      - service-discovery
-      - user-service
-      - vendor-service
-    networks:
-      - internal
-    restart: on-failure
-
-  user-service:
-    container_name: users
-    build: ./Users
-    image: opticsquid/leisure_review_users:0.4
-    depends_on:
-      - db-server
-      - service-discovery
-    networks:
-      - internal
-    restart: on-failure
-
-  vendor-service:
-    container_name: vendors
-    build: ./VendorService
-    image: opticsquid/leisure_review_vendors:0.3
-    depends_on:
-      - db-server
-      - service-discovery
-      - user-service
-    networks:
-      - internal
-    restart: on-failure
-
-  service-discovery:
-    container_name: service-discovery
-    build: ./Service_Registry
-    image: opticsquid/leisure_review_service_registry:0.3
-    networks:
-      - internal
-    restart: on-failure
-
-  db-server:
-    container_name: database
-    build:
-      dockerfile: ./Dockerfile
-    environment:
-      MYSQL_ROOT_PASSWORD: KpSEUx462yLpL9Ab
-      MYSQL_USER: soumalya
-      MYSQL_PASSWORD: aKRR9Y947Z3VsSUq
-    ports:
-      - "3031:3306"
-    networks:
-      - internal
+      - 3306:3306
     volumes:
-      - mysql:/var/lib/mysql
-      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    restart: unless-stopped
+      - mysqlMaster:/bitnami/mysql/data
+    networks:
+      - internal
+    environment:
+      - MYSQL_REPLICATION_MODE=master
+      - MYSQL_REPLICATION_USER=dup_user
+      - MYSQL_REPLICATION_PASSWORD=QsCAzX@#$%24680
+      - MYSQL_ROOT_PASSWORD=PkNLm@&$2357
+      - MYSQL_USER=soumalya
+      - MYSQL_PASSWORD=Hr@2shxEz8(8
+      - MYSQL_DATABASE=my_database
+  mysql-slave:
+    image: "bitnami/mysql:latest"
+    ports:
+      - "3306"
+    depends_on:
+      - mysql-master
+    networks:
+      - internal
+    environment:
+      - MYSQL_REPLICATION_MODE=slave
+      - MYSQL_REPLICATION_USER=dup_user
+      - MYSQL_REPLICATION_PASSWORD=QsCAzX@#$%24680
+      - MYSQL_MASTER_HOST=mysql-master
+      - MYSQL_MASTER_PORT_NUMBER=3306
+      - MYSQL_MASTER_ROOT_PASSWORD=master_root_password
 
 networks:
   internal:
     driver: bridge
 volumes:
-  mysql:
+  mysqlMaster:
